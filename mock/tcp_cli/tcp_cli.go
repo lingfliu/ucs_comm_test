@@ -3,6 +3,8 @@ package main
 import (
 	"encoding/binary"
 	"fmt"
+	"os"
+	"path"
 	"time"
 
 	"lingfliu.github.com/ucs_comm_test/conn"
@@ -39,7 +41,14 @@ func _task_write_pingpong(tx chan []byte) {
 }
 
 func main() {
-	ulog.Config(ulog.LOG_LEVEL_INFO, "", false)
+
+	dir, err := os.Getwd()
+	if err != nil {
+		return
+	}
+
+	logPath := path.Join(dir, "log.log")
+	ulog.Config(ulog.LOG_LEVEL_INFO, logPath, false)
 
 	conn := conn.NewTcpConn("localhost", 10071)
 

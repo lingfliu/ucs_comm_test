@@ -41,12 +41,21 @@ func Config(level int, exportPath string, trace bool) {
 	logger.Level = level
 
 	var writer io.Writer
+	var f *os.File
 	if exportPath != "" {
-		f, err := os.Create(exportPath)
-		if err != nil {
-			panic(err)
+		if _, err := os.Stat(exportPath); os.IsNotExist(err) {
+			f, err = os.Create(exportPath)
+			if err != nil {
+				panic(err)
+			}
+		} else {
+			f, err = os.OpenFile(exportPath, os.O_APPEND|os.O_WRONLY, os.ModeAppend)
+			if err != nil {
+				panic(err)
+			}
 		}
 		writer = io.MultiWriter(os.Stdout, f)
+
 	} else {
 		writer = os.Stdout
 	}

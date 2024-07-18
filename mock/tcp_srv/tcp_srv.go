@@ -1,6 +1,8 @@
 package main
 
 import (
+	"os"
+	"path"
 	"time"
 
 	"lingfliu.github.com/ucs_comm_test/conn"
@@ -17,7 +19,13 @@ func _task_handle_recv(rx chan []byte, tx chan []byte) {
 }
 
 func main() {
-	ulog.Config(ulog.LOG_LEVEL_INFO, "", false)
+
+	dir, err := os.Getwd()
+	if err != nil {
+		return
+	}
+	logPath := path.Join(dir, "log.log")
+	ulog.Config(ulog.LOG_LEVEL_INFO, logPath, false)
 
 	conn := conn.NewTcpConn("", 10071)
 
@@ -32,7 +40,7 @@ func main() {
 	go _task_handle_recv(rx, tx)
 
 	for {
-		ulog.Log().I("test tcp srv test", "sleep")
+		// ulog.Log().I("test tcp srv test", "sleep")
 		time.Sleep(1 * time.Second)
 	}
 }
