@@ -42,6 +42,12 @@ func _task_write_pingpong(tx chan []byte) {
 
 func main() {
 
+	if len(os.Args) < 2 {
+		return
+	}
+
+	host_addr := os.Args[1]
+	fmt.Print("connecting to ", host_addr, "\n")
 	dir, err := os.Getwd()
 	if err != nil {
 		return
@@ -50,9 +56,13 @@ func main() {
 	logPath := path.Join(dir, "log.log")
 	ulog.Config(ulog.LOG_LEVEL_INFO, logPath, false)
 
-	conn := conn.NewTcpConn("localhost", 10071)
+	conn := conn.NewTcpConn(host_addr, 10071)
 
-	conn.Connect()
+	ret := conn.Connect()
+	if ret < 0 {
+		fmt.Print("connect failed, exiting\n")
+		return
+	}
 
 	tx := make(chan []byte)
 	rx := make(chan []byte)
