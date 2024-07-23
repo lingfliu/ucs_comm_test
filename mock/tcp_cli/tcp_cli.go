@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"path"
+	"strconv"
 	"time"
 
 	"lingfliu.github.com/ucs_comm_test/conn"
@@ -26,11 +27,13 @@ func _task_handle_recv(rx chan []byte) {
 	}
 }
 
-func _task_write_pingpong(tx chan []byte) {
+func _task_write_pingpong(tx chan []byte, fps int) {
 	idx := 0
-	tic := time.NewTicker(1 * time.Second)
+	//convert fps to ms
+	tic := time.NewTicker(time.Second / time.Duration(fps))
 
 	for range tic.C {
+		// fmt.Print("sending pingpong\n")
 		idx++
 		now := utils.CurrentTimeInMilli()
 		bs := make([]byte, 16)
@@ -41,13 +44,21 @@ func _task_write_pingpong(tx chan []byte) {
 }
 
 func main() {
+	var fps int
+	var err error
 
-	if len(os.Args) < 2 {
+	if len(os.Args) < 3 {
 		return
 	}
 
 	host_addr := os.Args[1]
 	fmt.Print("connecting to ", host_addr, "\n")
+
+	fps, err = strconv.Atoi(os.Args[2])
+	if err != nil {
+		return
+	}
+
 	dir, err := os.Getwd()
 	if err != nil {
 		return
@@ -64,6 +75,7 @@ func main() {
 		return
 	}
 
+	fmt.Print("sending pingpong at fps = ", fps)
 	tx := make(chan []byte)
 	rx := make(chan []byte)
 
@@ -72,7 +84,7 @@ func main() {
 
 	go _task_handle_recv(rx)
 
-	go _task_write_pingpong(tx)
+	go _task_write_pingpong(tx, fps)
 
 	for {
 		time.Sleep(1 * time.Second)
