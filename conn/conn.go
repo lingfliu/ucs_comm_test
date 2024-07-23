@@ -164,7 +164,9 @@ func (q *QuicConn) _task_write(tx chan []byte) {
 
 type TcpConn struct {
 	BaseConn
-	c *net.TCPConn
+	c          *net.TCPConn
+	LastRecvAt int64
+	Stat       int
 }
 
 func NewTcpConn(addr string, port int) *TcpConn {
@@ -176,21 +178,33 @@ func NewTcpConn(addr string, port int) *TcpConn {
 	}
 }
 
-func (t *TcpConn) Accept() int {
+func (t *TcpConn) Accept(newC chan *TcpConn) {
 	addr := net.TCPAddr{
 		IP:   net.ParseIP(t.Addr),
 		Port: t.Port,
 	}
 	l, err := net.ListenTCP("tcp", &addr)
 	if err != nil {
-		return -1
+		ulog.Log().I("accept", "listen error")
+		return
 	}
-	c, err := l.AcceptTCP()
-	if err != nil {
-		return -1
+	for {
+		c, err := l.AcceptTCP()
+		if err != nil {
+			ulog.Log().I("accept", "accept error")
+			return
+		}
+
+		ulog.Log().I("accept", "new conn from "+c.RemoteAddr().String())
+		t := &TcpConn{
+			BaseConn: BaseConn{
+				Addr: t.Addr,
+				Port: t.Port,
+			},
+			c: c,
+		}
+		newC <- t
 	}
-	t.c = c
-	return 0
 }
 
 func (t *TcpConn) Connect() int {
