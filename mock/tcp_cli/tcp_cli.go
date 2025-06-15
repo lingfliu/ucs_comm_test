@@ -75,7 +75,7 @@ func main() {
 	}
 
 	flag.StringVar(&host_addr, "host_addr", "127.0.0.1", "host")
-	flag.StringVar(&logFile, "log_file", fmt.Sprintf("%s.log", time.Now().Format("20060102_150405")), "log_file")
+	flag.StringVar(&logFile, "log_file", fmt.Sprintf("%s_tcp.log", time.Now().Format("20060102_150405")), "log_file")
 	flag.IntVar(&host_port, "host_port", 10071, "port")
 	flag.IntVar(&fps, "fps", 10, "fps")
 

@@ -65,6 +65,7 @@ func main() {
 	var fps int
 	var host_addr string
 	var host_port int
+	var logFile string
 
 	var err error
 
@@ -75,6 +76,7 @@ func main() {
 	flag.StringVar(&host_addr, "host_addr", "127.0.0.1", "host")
 	flag.IntVar(&host_port, "host_port", 10074, "port")
 	flag.IntVar(&fps, "fps", 10, "fps")
+	flag.StringVar(&logFile, "log_file", fmt.Sprintf("%s_quic.log", time.Now().Format("20060102_150405")), "log_file")
 
 	flag.Parse()
 
