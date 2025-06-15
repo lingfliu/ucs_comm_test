@@ -3,8 +3,8 @@
 ## 运行程序：
 1. ./mock/tcp_cli/tcp_cli.go tcp客户端
 2. ./mock/tcp_srv/tcp_srv.go tcp服务端
-1. ./mock/quic_cli/quic_cli.go quic客户端
-2. ./mock/quic_cli/quic_srv.go quic服务端
+3. ./mock/quic_cli/quic_cli.go quic客户端
+4. ./mock/quic_cli/quic_srv.go quic服务端
 
 编译后分为为 ```tcp_cli.exe，tcp_srv.exe, quic_cli.exe, quic_srv.exe```
 
